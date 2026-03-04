@@ -35,7 +35,7 @@ class square {
 }
 
 class player extends square {
-    moveOneStep(dir, wall) {
+    moveOneStep(dir) {
         let direction = "none";
         switch (dir) {
             case 'l':
@@ -53,6 +53,31 @@ class player extends square {
             case 'd':
                 direction = "down";
                 this.posy += SQUARE_SIZE;
+                break;
+            default:
+                direction = "none";
+                break;
+        }
+        // console.log("Going " + direction);
+    }
+    moveBackOneStep(dir) {
+        let direction = "none";
+        switch (dir) {
+            case 'l':
+                direction = "left";
+                this.posx += SQUARE_SIZE;
+                break;
+            case 'r':
+                direction = "right";
+                this.posx -= SQUARE_SIZE;
+                break;
+            case 'u':
+                direction = "up";
+                this.posy += SQUARE_SIZE;
+                break;
+            case 'd':
+                direction = "down";
+                this.posy -= SQUARE_SIZE;
                 break;
             default:
                 direction = "none";
@@ -95,8 +120,33 @@ window.addEventListener("load", function(event) {
     const g = new goal(280, 440, "rgb(0, 180, 90)")
     g.draw(ctx);
 
-    const w1 = new wall(240, 440, "rgb(10, 60, 120)")
-    w1.draw(ctx);
+    const map = [
+                 [0, 0, 0, 0, 0, 1, 1, 0],
+                 [0, 0, 0, 0, 0, 1, 1, 0],
+                 [0, 0, 0, 1, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0, 0, 1, 0],
+                 [0, 0, 0, 0, 0, 0, 1, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 0],
+                 [0, 0, 0, 1, 0, 0, 0, 0],
+                 [0, 0, 0, 1, 0, 0, 1, 0],
+                 [0, 0, 0, 1, 0, 0, 1, 0],
+                 [0, 0, 0, 1, 0, 0, 1, 0],
+                ]
+    const walls = [];
+    for (let i = 0; i < MAX_HEIGHT / SQUARE_SIZE; i++) {
+        for (let j = 0; j < MAX_WIDTH / SQUARE_SIZE; j++) {
+            if (map[i][j] == 1) {
+                const w = new wall(j * SQUARE_SIZE, i * SQUARE_SIZE, "rgb(10, 60, 120)");
+                walls.push(w);
+            }
+        }
+    }
+    for (w of walls) {
+        w.draw(ctx);
+    }
+    // const w1 = new wall(240, 440, "rgb(10, 60, 120)")
 
     let animating = false;
 
@@ -129,7 +179,6 @@ window.addEventListener("load", function(event) {
         animating = true;
         // console.log("Animation Started")
     }
-
     // stops the animation
     function stopAnimation() {
         clearTimeout(timerId);
@@ -140,15 +189,23 @@ window.addEventListener("load", function(event) {
     // This function is called every 16 milliseconds
     function updateAnimation() {
         // 1. Update the position of the ball
-        p.moveOneStep(dir, w1);
+        p.moveOneStep(dir);
         p.checkCollision(g, "Goal reached")
-        p.checkCollision(w1, "Wall detected")
+        for (wall of walls) {
+            if (p.checkCollision(wall, "Wall detected")) {
+                p.moveBackOneStep(dir);
+                stopAnimation();
+            }
+        }
         // 2. Clear the canvas
         ctx.clearRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
         // 3. Draw the frame using information stored in player
         g.draw(ctx);
         p.draw(ctx);
-        w1.draw(ctx);
+        // w1.draw(ctx);
+        for (w of walls) {
+            w.draw(ctx);
+        }
         // 4. Border collision detection: stop the animation if the player is at the edge of the canvas
         if ((dir == 'l' || dir == 'r') && (p.posx >= c.width - p.len || p.posx <= 0)) {
             stopAnimation();

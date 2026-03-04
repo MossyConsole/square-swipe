@@ -1,0 +1,160 @@
+/* 
+Author: Benoit Thompson. 
+Date created: March 2nd
+Purpose: CSS stylesheet for the javascript game lab 7.2. 
+*/
+
+/*
+    Resources
+    Swiping motion: https://www.geeksforgeeks.org/javascript/simple-swipe-with-vanilla-javascript/
+ */
+
+const SQUARE_SIZE = 40; // in px
+const MAX_WIDTH = 320; // 8 squares wide
+const MAX_HEIGHT = 480; // 12 squares long
+
+class square {
+    constructor(x, y, colour) {
+        this.posx = x;
+        this.posy = y;
+        this.colour = colour;
+        this.len = SQUARE_SIZE;
+    }
+    draw(ctx) {
+        ctx.fillStyle = this.colour;
+        ctx.fillRect(this.posx, this.posy, this.len, this.len);
+    }
+    checkCollision(target, message) {
+        this.col_message = message || "colliding";
+        if (target.posx == this.posx && target.posy == this.posy) {
+            console.log(this.col_message);
+            return true;
+        }
+        return false;
+    }
+}
+
+class player extends square {
+    moveOneStep(dir, wall) {
+        let direction = "none";
+        switch (dir) {
+            case 'l':
+                direction = "left";
+                this.posx -= SQUARE_SIZE;
+                break;
+            case 'r':
+                direction = "right";
+                this.posx += SQUARE_SIZE;
+                break;
+            case 'u':
+                direction = "up";
+                this.posy -= SQUARE_SIZE;
+                break;
+            case 'd':
+                direction = "down";
+                this.posy += SQUARE_SIZE;
+                break;
+            default:
+                direction = "none";
+                break;
+        }
+        // console.log("Going " + direction);
+    }
+}
+
+class goal extends square {};
+
+class wall extends square {};
+
+function handleSwipe(x1, y1, x2, y2) {
+    let swipeThreshold = 50; // min pixels required to swipe
+    let deltax = Math.abs(x2 - x1);
+    let deltay = Math.abs(y2 - y1);
+    let direction = 'n';
+    let distance = (Math.sqrt(Math.pow(deltax, 2) + Math.pow(deltay, 2)));
+    if (distance > swipeThreshold) {
+            if (deltax > deltay) { direction = (x2 > x1) ? 'r' : 'l'; }
+            else                 { direction = (y2 > y1) ? 'd' : 'u'; }
+    }
+    return direction;
+}
+
+window.addEventListener("load", function(event) {
+    // lock it all into place
+    this.document.getElementById("container").style.position = "fixed";
+
+    let startX, startY, endX, endY, dir;
+    const c = this.document.getElementById("canvas");
+    const ctx = c.getContext("2d");
+    const x_offset = c.getBoundingClientRect().x;
+    const y_offset = c.getBoundingClientRect().y;
+
+    const p = new player(40, 40, "rgb(100, 100, 120)");
+    p.draw(ctx);
+
+    const g = new goal(280, 440, "rgb(0, 180, 90)")
+    g.draw(ctx);
+
+    const w1 = new wall(240, 440, "rgb(10, 60, 120)")
+    w1.draw(ctx);
+
+    let animating = false;
+
+    c.addEventListener('touchstart', function (event) {
+        startX = Math.round(event.touches[0].clientX - x_offset);
+        startY = Math.round(event.touches[0].clientY - y_offset);
+        // console.log("start at " + startX + "," + startY);
+    });
+
+    c.addEventListener('touchend', function (event) {
+        if (!animating) {
+            endX = Math.round(event.changedTouches[0].clientX - x_offset);
+            endY = Math.round(event.changedTouches[0].clientY - y_offset);
+            // console.log("end at " + endX + "," + endY);
+            
+            dir = handleSwipe(startX, startY, endX, endY);
+            if (dir != 'n') { startAnimation(); }
+        }
+    });
+
+    let timerId;            // holds the id of the timer
+
+    // starts the animation
+    function startAnimation() {
+        // 16  milliseconds works out to 62.5 frames per second.
+        // for games, 60 frames per second is standard
+        let FPS = 48;
+        let ms = 1000 / FPS;
+        timerId = setInterval(updateAnimation, ms);
+        animating = true;
+        // console.log("Animation Started")
+    }
+
+    // stops the animation
+    function stopAnimation() {
+        clearTimeout(timerId);
+        animating = false;
+        // console.log("Animation Stopped")
+    }
+
+    // This function is called every 16 milliseconds
+    function updateAnimation() {
+        // 1. Update the position of the ball
+        p.moveOneStep(dir, w1);
+        p.checkCollision(g, "Goal reached")
+        p.checkCollision(w1, "Wall detected")
+        // 2. Clear the canvas
+        ctx.clearRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
+        // 3. Draw the frame using information stored in player
+        g.draw(ctx);
+        p.draw(ctx);
+        w1.draw(ctx);
+        // 4. Border collision detection: stop the animation if the player is at the edge of the canvas
+        if ((dir == 'l' || dir == 'r') && (p.posx >= c.width - p.len || p.posx <= 0)) {
+            stopAnimation();
+        }
+        if ((dir == 'u' || dir == 'd') && (p.posy >= c.height - p.len || p.posy <= 0)) {
+            stopAnimation();
+        }
+    }
+});

@@ -11,7 +11,7 @@ Purpose: JS for the javascript game lab 7.2.
 
 const SQUARE_SIZE = 40; // in px
 const MAX_WIDTH = 320; // 8 squares wide
-const MAX_HEIGHT = 480; // 12 squares long
+const MAX_HEIGHT = 400; // 10 squares long
 
 class square {
     constructor(x, y, colour) {
@@ -91,6 +91,37 @@ class goal extends square {};
 
 class wall extends square {};
 
+class map {
+    // have data about
+    // starting x and y for the player and goal
+    // 2d grid of walls
+    // number of moves required for 3 and 2 stars
+};
+
+// object in place of an enum
+const gameState = {
+    menu: 'menu',
+    play: 'play',
+    levels: 'levels'
+};
+
+function parseMap(mapFile) {
+
+}
+
+function initWalls(map) {
+    let walls = [];
+    for (let i = 0; i < MAX_HEIGHT / SQUARE_SIZE; i++) {
+        for (let j = 0; j < MAX_WIDTH / SQUARE_SIZE; j++) {
+            if (map[i][j] == 1) {
+                const w = new wall(j * SQUARE_SIZE, i * SQUARE_SIZE, "rgb(10, 60, 120)");
+                walls.push(w);
+            }
+        }
+    }
+    return walls;
+}
+
 function handleSwipe(x1, y1, x2, y2) {
     let swipeThreshold = 50; // min pixels required to swipe
     let deltax = Math.abs(x2 - x1);
@@ -105,22 +136,21 @@ function handleSwipe(x1, y1, x2, y2) {
 }
 
 window.addEventListener("load", function(event) {
-    let startX, startY, endX, endY, dir;
-    let initx = 40, inity = 40;
-
     const c = this.document.getElementById("canvas");
     const ctx = c.getContext("2d");
+    const swipeCounter = this.document.getElementById("swipeCount");
 
+    let startX, startY, endX, endY, dir;
+    let initx = 40, inity = 40;
+    let swipeCount = 0;
+    let game = gameState.play;
+    let animating = false;
     const x_offset = c.getBoundingClientRect().x;
     const y_offset = c.getBoundingClientRect().y;
-
     const restart = this.document.getElementById("restart");
 
     const p = new player(initx, inity, "rgb(100, 100, 120)");
-    p.draw(ctx);
-
-    const g = new goal(280, 440, "rgb(0, 180, 90)")
-    g.draw(ctx);
+    const g = new goal(280, 360, "rgb(0, 180, 90)")
 
     const map = [
                  [0, 0, 0, 0, 0, 1, 1, 0],
@@ -133,31 +163,15 @@ window.addEventListener("load", function(event) {
                  [0, 0, 0, 0, 0, 0, 0, 0],
                  [0, 0, 0, 1, 0, 0, 0, 0],
                  [0, 0, 0, 1, 0, 0, 1, 0],
-                 [0, 0, 0, 1, 0, 0, 1, 0],
-                 [0, 0, 0, 1, 0, 0, 1, 0],
                 ]
-    const walls = [];
-    for (let i = 0; i < MAX_HEIGHT / SQUARE_SIZE; i++) {
-        for (let j = 0; j < MAX_WIDTH / SQUARE_SIZE; j++) {
-            if (map[i][j] == 1) {
-                const w = new wall(j * SQUARE_SIZE, i * SQUARE_SIZE, "rgb(10, 60, 120)");
-                walls.push(w);
-            }
-        }
-    }
-    for (w of walls) {
-        w.draw(ctx);
-    }
-    // const w1 = new wall(240, 440, "rgb(10, 60, 120)")
-
-    let animating = false;
+    const walls = initWalls(map);
 
     c.addEventListener('touchstart', function (event) {
         startX = Math.round(event.touches[0].clientX - x_offset);
         startY = Math.round(event.touches[0].clientY - y_offset);
         // console.log("start at " + startX + "," + startY);
 
-        document.getElementById("b").style["overflow"] = "hidden";
+        document.getElementById("b").style["overflow"] = "hidden"; // stop the body element from moving
     });
 
     c.addEventListener('touchend', function (event) {
@@ -167,13 +181,18 @@ window.addEventListener("load", function(event) {
             // console.log("end at " + endX + "," + endY);
             
             dir = handleSwipe(startX, startY, endX, endY);
-            if (dir != 'n') { startAnimation(); }
+            if (dir != 'n') { 
+                updateSwipeCount();
+                startAnimation(); 
+            }
         }
     });
 
     restart.addEventListener("click", function() {
         p.posx = initx;
         p.posy = inity;
+        swipeCount = -1;
+        updateSwipeCount();
         drawScreen();
     });
 
@@ -185,7 +204,9 @@ window.addEventListener("load", function(event) {
         // for games, 60 frames per second is standard
         let FPS = 48;
         let ms = 1000 / FPS;
-        timerId = setInterval(updateAnimation, ms);
+        if (game == gameState.play) {
+            timerId = setInterval(updateBallAnimation, ms);
+        }
         animating = true;
         // console.log("Animation Started")
     }
@@ -194,7 +215,7 @@ window.addEventListener("load", function(event) {
         clearTimeout(timerId);
         animating = false;
 
-        document.getElementById("b").style["overflow"] = "visible";
+        document.getElementById("b").style["overflow"] = "visible"; // let the body element move again, on a swipe
         // console.log("Animation Stopped")
     }
 
@@ -210,7 +231,7 @@ window.addEventListener("load", function(event) {
     }
 
     // This function is called every 16 milliseconds
-    function updateAnimation() {
+    function updateBallAnimation() {
         // 1. Update the position of the ball
         p.moveOneStep(dir);
         p.checkCollision(g, "Goal reached")
@@ -241,5 +262,10 @@ window.addEventListener("load", function(event) {
         }
 
         drawScreen();
+    }
+
+    function updateSwipeCount() {
+        swipeCount++;
+        swipeCounter.innerHTML = "Swipes: " + swipeCount;
     }
 });

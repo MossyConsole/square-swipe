@@ -32,15 +32,15 @@ div div {
     margin: 1%;
 }
 h1 {
-    margin-top: 2%;
+    margin-top: 4%;
 }
 h2 {
     margin-bottom: 0%;
 }
 .navlink {
     padding: 20px;
-    padding-top:2px;
-    padding-bottom:2px;
+    padding-top:8px;
+    padding-bottom:8px;
     background-color: #91B39E;
     color: #19091a;
     border: none;
@@ -49,14 +49,17 @@ h2 {
 #levels {
     background-color: gray;
 }
-#header, #footer {
+#header, #footer, #subheader {
     width: 100%;
     text-align: center;
     margin: 0%;
     color: #19091a;
 }
+#subheader {
+    min-height: 30px;
+}
 #nav {
-    height: 22px;
+    height: auto;
 }
 #container {
     width: 100%;
@@ -71,7 +74,7 @@ h2 {
     justify-content: center;
     align-items: center;
     min-width: 360px;
-    min-height: 504px;
+    min-height: 408px;
     /*background-color: #B39EB5;*/
 }
 #canvas {

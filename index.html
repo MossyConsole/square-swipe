@@ -14,17 +14,21 @@ Purpose: CSS stylesheet for the javascript game lab 7.2.
     <title>Square Swipe!</title>
 </head>
 
-<body>
+<body id="b">
     <div id="container">
         <div id="header">
-            <div><h1>Square Swipe!</h1></div>
-            <div><h2>A very fun game (I promise)</h2></div>
+            <h1>Square Swipe!</h1>
+            <h2>A very fun game (I promise)</h2>
         </div>
-        <div id="nav" display="none"></div>
+        <div id="nav">
+            <input class="navlink" type="submit" value="Main Menu">
+            <input id="restart" class="navlink" type="submit" value="Restart">
+            <input id="levels" class="navlink" type="submit" value="Levels">
+        </div>
         <div id="content">
             <canvas id="canvas" width="320" height="480"></canvas>
         </div>
-        <div id="footer"><h3>&#xA9; Benoit Thompson, CompSci 1XC3 2025-26<h3></div>
+        <div id="footer"><p>&#xA9; Benoit Thompson, CompSci 1XC3 2025-26<p></div>
     </div>
 </body>
 

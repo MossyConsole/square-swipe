@@ -1,7 +1,7 @@
 /* 
 Author: Benoit Thompson. 
 Date created: March 2nd
-Purpose: CSS stylesheet for the javascript game lab 7.2. 
+Purpose: JS for the javascript game lab 7.2. 
 */
 
 /*
@@ -105,16 +105,18 @@ function handleSwipe(x1, y1, x2, y2) {
 }
 
 window.addEventListener("load", function(event) {
-    // lock it all into place
-    this.document.getElementById("container").style.position = "fixed";
-
     let startX, startY, endX, endY, dir;
+    let initx = 40, inity = 40;
+
     const c = this.document.getElementById("canvas");
     const ctx = c.getContext("2d");
+
     const x_offset = c.getBoundingClientRect().x;
     const y_offset = c.getBoundingClientRect().y;
 
-    const p = new player(40, 40, "rgb(100, 100, 120)");
+    const restart = this.document.getElementById("restart");
+
+    const p = new player(initx, inity, "rgb(100, 100, 120)");
     p.draw(ctx);
 
     const g = new goal(280, 440, "rgb(0, 180, 90)")
@@ -122,12 +124,12 @@ window.addEventListener("load", function(event) {
 
     const map = [
                  [0, 0, 0, 0, 0, 1, 1, 0],
-                 [0, 0, 0, 0, 0, 1, 1, 0],
-                 [0, 0, 0, 1, 0, 0, 0, 0],
+                 [0, 0, 0, 1, 0, 1, 1, 0],
+                 [0, 0, 1, 1, 0, 0, 0, 0],
                  [0, 0, 0, 0, 0, 0, 1, 0],
                  [0, 0, 0, 0, 0, 0, 1, 0],
-                 [0, 0, 0, 0, 0, 0, 0, 0],
-                 [0, 0, 0, 0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 1],
+                 [0, 0, 0, 0, 1, 0, 0, 0],
                  [0, 0, 0, 0, 0, 0, 0, 0],
                  [0, 0, 0, 1, 0, 0, 0, 0],
                  [0, 0, 0, 1, 0, 0, 1, 0],
@@ -154,6 +156,8 @@ window.addEventListener("load", function(event) {
         startX = Math.round(event.touches[0].clientX - x_offset);
         startY = Math.round(event.touches[0].clientY - y_offset);
         // console.log("start at " + startX + "," + startY);
+
+        document.getElementById("b").style["overflow"] = "hidden";
     });
 
     c.addEventListener('touchend', function (event) {
@@ -165,6 +169,12 @@ window.addEventListener("load", function(event) {
             dir = handleSwipe(startX, startY, endX, endY);
             if (dir != 'n') { startAnimation(); }
         }
+    });
+
+    restart.addEventListener("click", function() {
+        p.posx = initx;
+        p.posy = inity;
+        drawScreen();
     });
 
     let timerId;            // holds the id of the timer
@@ -183,7 +193,20 @@ window.addEventListener("load", function(event) {
     function stopAnimation() {
         clearTimeout(timerId);
         animating = false;
+
+        document.getElementById("b").style["overflow"] = "visible";
         // console.log("Animation Stopped")
+    }
+
+    function drawScreen() {
+        ctx.clearRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
+
+        g.draw(ctx);
+        p.draw(ctx);
+
+        for (w of walls) {
+            w.draw(ctx);
+        }
     }
 
     // This function is called every 16 milliseconds
@@ -197,21 +220,26 @@ window.addEventListener("load", function(event) {
                 stopAnimation();
             }
         }
-        // 2. Clear the canvas
-        ctx.clearRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
-        // 3. Draw the frame using information stored in player
-        g.draw(ctx);
-        p.draw(ctx);
-        // w1.draw(ctx);
-        for (w of walls) {
-            w.draw(ctx);
-        }
-        // 4. Border collision detection: stop the animation if the player is at the edge of the canvas
+        // Border collision detection: stop the animation if the player is at the edge of the canvas
         if ((dir == 'l' || dir == 'r') && (p.posx >= c.width - p.len || p.posx <= 0)) {
+            if (p.posx >= c.width - p.len) {
+                p.posx = c.width - p.len;
+            }
+            else {
+                p.posx = 0;
+            }
             stopAnimation();
         }
-        if ((dir == 'u' || dir == 'd') && (p.posy >= c.height - p.len || p.posy <= 0)) {
+        else if ((dir == 'u' || dir == 'd') && (p.posy >= c.height - p.len || p.posy <= 0)) {
+            if (p.posy >= c.height - p.len) {
+                p.posy = c.height - p.len;
+            }
+            else {
+                p.posy = 0;
+            }
             stopAnimation();
         }
+
+        drawScreen();
     }
 });

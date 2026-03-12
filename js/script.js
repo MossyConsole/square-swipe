@@ -6,7 +6,8 @@ Purpose: JS for the javascript game lab 7.2.
 
 /*
     Resources
-    Swiping motion: https://www.geeksforgeeks.org/javascript/simple-swipe-with-vanilla-javascript/
+    Inspiration: https://freefrontend.com/code/interactive-sliding-grid-puzzle-game-2026-03-02/
+    Swiping motion capture guide: https://www.geeksforgeeks.org/javascript/simple-swipe-with-vanilla-javascript/
  */
 
 const SQUARE_SIZE = 40; // in px
@@ -92,7 +93,7 @@ class goal extends square {};
 class wall extends square {};
 
 class map {
-    // have data about
+    // TODO: have data about
     // starting x and y for the player and goal
     // 2d grid of walls
     // number of moves required for 3 and 2 stars
@@ -104,10 +105,6 @@ const gameState = {
     play: 'play',
     levels: 'levels'
 };
-
-function parseMap(mapFile) {
-
-}
 
 function initWalls(map) {
     let walls = [];
@@ -135,6 +132,8 @@ function handleSwipe(x1, y1, x2, y2) {
     return direction;
 }
 
+
+// Start executing
 window.addEventListener("load", function(event) {
     const c = this.document.getElementById("canvas");
     const ctx = c.getContext("2d");
@@ -145,11 +144,12 @@ window.addEventListener("load", function(event) {
     let swipeCount = 0;
     let game = gameState.play;
     let animating = false;
+    let timerId;            // holds the id of the timer
     const x_offset = c.getBoundingClientRect().x;
     const y_offset = c.getBoundingClientRect().y;
     const restart = this.document.getElementById("restart");
 
-    const p = new player(initx, inity, "rgb(100, 100, 120)");
+    const p = new player(initx, inity, "rgb(167, 63, 161)");
     const g = new goal(280, 360, "rgb(0, 180, 90)")
 
     const map = [
@@ -196,8 +196,6 @@ window.addEventListener("load", function(event) {
         drawScreen();
     });
 
-    let timerId;            // holds the id of the timer
-
     // starts the animation
     function startAnimation() {
         // 16  milliseconds works out to 62.5 frames per second.
@@ -218,7 +216,6 @@ window.addEventListener("load", function(event) {
         document.getElementById("b").style["overflow"] = "visible"; // let the body element move again, on a swipe
         // console.log("Animation Stopped")
     }
-
     function drawScreen() {
         ctx.clearRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
 
@@ -229,7 +226,6 @@ window.addEventListener("load", function(event) {
             w.draw(ctx);
         }
     }
-
     // This function is called every 16 milliseconds
     function updateBallAnimation() {
         // 1. Update the position of the ball
@@ -267,5 +263,14 @@ window.addEventListener("load", function(event) {
     function updateSwipeCount() {
         swipeCount++;
         swipeCounter.innerHTML = "Swipes: " + swipeCount;
+    }
+
+    // initialize
+    if (game == gameState.play) {
+         p.posx = initx;
+        p.posy = inity;
+        swipeCount = -1;
+        updateSwipeCount();
+        drawScreen();
     }
 });

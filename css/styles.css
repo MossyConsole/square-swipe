@@ -38,7 +38,7 @@ h2 {
     margin-bottom: 0%;
 }
 .navlink {
-    padding: 20px;
+    padding: 12px;
     padding-top:8px;
     padding-bottom:8px;
     background-color: #91B39E;
@@ -46,7 +46,10 @@ h2 {
     border: none;
     border-radius: 8px;
 }
-#levels {
+.navlink:active {
+    background-color: #6c8876;
+}
+#levels, #help {
     background-color: gray;
 }
 #header, #footer, #subheader {

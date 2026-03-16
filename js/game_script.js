@@ -310,7 +310,7 @@ window.addEventListener("load", function(event) {
     function drawEndScreen(record) {
         drawScreen();
         stopAnimation();
-        ctx.fillStyle = "rgba(182, 222, 255, 0.5)";
+        ctx.fillStyle = "rgba(182, 222, 255, 0.8)";
         ctx.fillRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
 
         // level 1 complete
@@ -336,7 +336,7 @@ window.addEventListener("load", function(event) {
     function drawHelpScreen() {
         drawScreen();
         stopAnimation();
-        ctx.fillStyle = "rgba(182, 222, 255, 0.5)";
+        ctx.fillStyle = "rgba(182, 222, 255, 0.8)";
         ctx.fillRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
 
         let txt = "Welcome To";

@@ -143,7 +143,7 @@ window.addEventListener("load", function(event) {
         // Border collision detection: stop the animation if the player is at the edge of the canvas
         if (dir == 'r'){
             posx += SQUARE_SIZE / 2;
-            if (posx >= c.width - SQUARE_SIZE) {
+            if (posx >= c.width) {
                 stopAnimation();
                 console.log("bye!");
                 window.location.href = "game.html";

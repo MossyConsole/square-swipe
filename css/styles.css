@@ -19,6 +19,7 @@ colours {
     box-sizing: border-box; /* includes the border and padding in the width */
     z-index: 0;
     overscroll-behavior: none;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 body {
     margin: auto;
@@ -32,12 +33,13 @@ div div {
     margin: 1%;
 }
 h1 {
-    margin-top: 4%;
+    margin-top: 6%;
 }
 h2 {
     margin-bottom: 0%;
 }
 .navlink {
+    font-size: 0.8em;
     padding: 12px;
     padding-top:8px;
     padding-bottom:8px;
@@ -49,8 +51,15 @@ h2 {
 .navlink:active {
     background-color: #6c8876;
 }
-#levels, #help {
+#help {
     background-color: gray;
+}
+#info {
+    display: flex;
+    justify-content: center;
+}
+#info h3 {
+    width: 30%;
 }
 #header, #footer, #subheader {
     width: 100%;
@@ -76,8 +85,8 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-width: 360px;
-    min-height: 408px;
+    min-width: 320px;
+    min-height: 320px;
     /*background-color: #B39EB5;*/
 }
 #canvas {

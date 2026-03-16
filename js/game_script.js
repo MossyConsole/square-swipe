@@ -11,8 +11,8 @@ Purpose: JS for the javascript game lab 7.2.
  */
 
 const SQUARE_SIZE = 40; // in px
-const MAX_WIDTH = 320; // 8 squares wide
-const MAX_HEIGHT = 400; // 10 squares long
+const MAX_WIDTH  = 320; // 8 squares wide
+const MAX_HEIGHT = 320; // 8 squares long
 
 class square {
     constructor(x, y, colour) {
@@ -28,7 +28,7 @@ class square {
     checkCollision(target, message) {
         this.col_message = message || "colliding";
         if (target.posx == this.posx && target.posy == this.posy) {
-            console.log(this.col_message);
+            // console.log(this.col_message);
             return true;
         }
         return false;
@@ -36,6 +36,9 @@ class square {
 }
 
 class player extends square {
+    constructor(x, y, colour) {
+        super(x, y, colour);
+    }
     moveOneStep(dir) {
         let direction = "none";
         switch (dir) {
@@ -88,15 +91,30 @@ class player extends square {
     }
 }
 
-class goal extends square {};
+class goal extends square {
+    constructor(x, y, colour) {
+        super(x, y, colour);
+    }
+};
 
-class wall extends square {};
+// TODO: "error: wall is not a constructor"
+class wall extends square {
+    constructor(x, y, colour) {
+        super(x, y, colour);
+    }
+};
 
 class map {
-    // TODO: have data about
-    // starting x and y for the player and goal
-    // 2d grid of walls
-    // number of moves required for 3 and 2 stars
+    constructor(id, grid, playerx, playery, goalx, goaly, moves3star) {
+        this.id = id;
+        this.grid = grid;
+        this.px = playerx * SQUARE_SIZE;
+        this.py = playery * SQUARE_SIZE;
+        this.gx = goalx * SQUARE_SIZE;
+        this.gy = goaly * SQUARE_SIZE;
+        this.moves3 = moves3star;
+        this.moves2 = Math.ceil(moves3star * 5 / 3);
+    };
 };
 
 // object in place of an enum
@@ -111,7 +129,7 @@ function initWalls(map) {
     for (let i = 0; i < MAX_HEIGHT / SQUARE_SIZE; i++) {
         for (let j = 0; j < MAX_WIDTH / SQUARE_SIZE; j++) {
             if (map[i][j] == 1) {
-                const w = new wall(j * SQUARE_SIZE, i * SQUARE_SIZE, "rgb(10, 60, 120)");
+                const w = new square(j * SQUARE_SIZE, i * SQUARE_SIZE, "rgb(10, 60, 120)");
                 walls.push(w);
             }
         }
@@ -132,39 +150,67 @@ function handleSwipe(x1, y1, x2, y2) {
     return direction;
 }
 
-
 // Start executing
 window.addEventListener("load", function(event) {
     const c = this.document.getElementById("canvas");
     const ctx = c.getContext("2d");
+    const clear = this.document.getElementById("clear");
+    const levelID = this.document.getElementById("levelID");
     const swipeCounter = this.document.getElementById("swipeCount");
+    const swipeRecord = this.document.getElementById("swipeRecord");
+    const nextLevel = this.document.getElementById("levels");
 
     let startX, startY, endX, endY, dir;
-    let initx = 40, inity = 40;
     let swipeCount = 0;
     let game = gameState.play;
+    let mapIndex = 0;
     let animating = false;
     let timerId;            // holds the id of the timer
     const x_offset = c.getBoundingClientRect().x;
     const y_offset = c.getBoundingClientRect().y;
     const restart = this.document.getElementById("restart");
 
-    const p = new player(initx, inity, "rgb(167, 63, 161)");
-    const g = new goal(280, 360, "rgb(0, 180, 90)")
-
-    const map = [
-                 [0, 0, 0, 0, 0, 1, 1, 0],
+    
+    const grid1 = [
+                 [1, 0, 0, 0, 0, 0, 0, 1],
+                 [1, 0, 0, 0, 1, 1, 1, 1],
+                 [1, 0, 0, 0, 0, 0, 0, 1],
+                 [1, 0, 1, 0, 0, 0, 0, 1],
+                 [1, 0, 1, 1, 1, 0, 0, 1],
+                 [0, 0, 1, 1, 0, 0, 1, 1],
+                 [0, 0, 0, 1, 0, 0, 0, 0],
+                 [1, 1, 1, 1, 1, 0, 0, 1],
+                ]
+    const m1 = new map(1, grid1, 5, 3, 2, 6, 9);
+    const grid2 = [
+                 [1, 1, 0, 0, 0, 1, 1, 0],
                  [0, 0, 0, 1, 0, 1, 1, 0],
                  [0, 0, 1, 1, 0, 0, 0, 0],
-                 [0, 0, 0, 0, 0, 0, 1, 0],
-                 [0, 0, 0, 0, 0, 0, 1, 0],
                  [0, 0, 0, 0, 0, 0, 0, 1],
                  [0, 0, 0, 0, 1, 0, 0, 0],
-                 [0, 0, 0, 0, 0, 0, 0, 0],
-                 [0, 0, 0, 1, 0, 0, 0, 0],
-                 [0, 0, 0, 1, 0, 0, 1, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 1],
+                 [1, 0, 0, 1, 0, 0, 0, 1],
+                 [1, 1, 1, 1, 0, 0, 1, 1],
                 ]
-    const walls = initWalls(map);
+    const m2 = new map(2, grid2, 1, 1, 7, 0, 7);
+    const grid3 = [
+                 [0, 0, 0, 1, 1, 1, 0, 0],
+                 [0, 0, 0, 0, 1, 1, 1, 0],
+                 [0, 1, 1, 1, 1, 0, 0, 0],
+                 [0, 0, 1, 0, 0, 0, 0, 1],
+                 [1, 0, 0, 0, 1, 0, 1, 1],
+                 [0, 0, 1, 0, 0, 0, 0, 0],
+                 [0, 1, 1, 0, 1, 0, 0, 0],
+                 [0, 0, 0, 0, 1, 0, 0, 0],
+                ]
+    const m3 = new map(3, grid3, 2, 1, 7, 7, 13);
+
+    const maps = [m1, m2, m3];
+    let cm = maps[mapIndex]; // current map
+
+    const p = new player(cm.px, cm.py, "rgb(167, 63, 161)");
+    const g = new goal(cm.gx, cm.gy, "rgb(0, 180, 90)");
+    let walls = initWalls(cm.grid);
 
     c.addEventListener('touchstart', function (event) {
         startX = Math.round(event.touches[0].clientX - x_offset);
@@ -188,12 +234,17 @@ window.addEventListener("load", function(event) {
         }
     });
 
+    clear.addEventListener("click", function() {
+        sessionStorage.removeItem(cm.id);
+        gameInit();
+    });
+
     restart.addEventListener("click", function() {
-        p.posx = initx;
-        p.posy = inity;
-        swipeCount = -1;
-        updateSwipeCount();
-        drawScreen();
+        gameInit();
+    });
+
+    nextLevel.addEventListener("click", function() {
+        gameInit(true);
     });
 
     // starts the animation
@@ -218,6 +269,8 @@ window.addEventListener("load", function(event) {
     }
     function drawScreen() {
         ctx.clearRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
+        ctx.fillStyle = "rgb(182, 222, 255)";
+        ctx.fillRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
 
         g.draw(ctx);
         p.draw(ctx);
@@ -230,7 +283,11 @@ window.addEventListener("load", function(event) {
     function updateBallAnimation() {
         // 1. Update the position of the ball
         p.moveOneStep(dir);
-        p.checkCollision(g, "Goal reached")
+        if (p.checkCollision(g, "Goal reached")) {
+            sessionStorage.setItem(cm.id, swipeCount);
+            gameInit(true);
+            return;
+        }
         for (wall of walls) {
             if (p.checkCollision(wall, "Wall detected")) {
                 p.moveBackOneStep(dir);
@@ -263,14 +320,39 @@ window.addEventListener("load", function(event) {
     function updateSwipeCount() {
         swipeCount++;
         swipeCounter.innerHTML = "Swipes: " + swipeCount;
+        if (sessionStorage.getItem(cm.id)) {
+            let record = sessionStorage.getItem(cm.id);
+            swipeRecord.innerHTML = "Record: " + record;
+        }
+        else {
+            swipeRecord.innerHTML = "Record: " + 0;
+        }
     }
 
-    // initialize
-    if (game == gameState.play) {
-         p.posx = initx;
-        p.posy = inity;
+    function gameInit(increment) {
+        let inc = increment || false;
+        if (inc){
+            stopAnimation();
+            if(mapIndex < 2) {
+                mapIndex++;
+            }
+            else {
+                mapIndex = 0;
+            }
+        }
+        cm = maps[mapIndex]; // current map
+        levelID.innerHTML = "Level " + cm.id;
+        p.posx = cm.px;
+        p.posy = cm.py;
+        g.posx = cm.gx;
+        g.posy = cm.gy;
         swipeCount = -1;
+        walls = initWalls(cm.grid);
         updateSwipeCount();
         drawScreen();
+    }
+
+    if (game == gameState.play) {
+        gameInit();
     }
 });

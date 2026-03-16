@@ -10,35 +10,35 @@ Purpose: JS for the javascript game lab 7.2.
     Swiping motion capture guide: https://www.geeksforgeeks.org/javascript/simple-swipe-with-vanilla-javascript/
  */
 
-const SQUARE_SIZE = 40; // in px
-const MAX_WIDTH  = 320; // 8 squares wide
-const MAX_HEIGHT = 320; // 8 squares long
-
-function handleSwipe(x1, y1, x2, y2) {
-    let swipeThreshold = 50; // min pixels required to swipe
-    let deltax = Math.abs(x2 - x1);
-    let deltay = Math.abs(y2 - y1);
-    let direction = 'n';
-    let distance = (Math.sqrt(Math.pow(deltax, 2) + Math.pow(deltay, 2)));
-    if (distance > swipeThreshold) {
-            if (deltax > deltay) { direction = (x2 > x1) ? 'r' : 'l'; }
-            else                 { direction = (y2 > y1) ? 'd' : 'u'; }
-    }
-    console.log(direction);
-    return direction;
-}
-
-function fontSet(ctx, size) {
-    let txtSize = "" + size;
-    ctx.fillStyle = "#19091a";
-    ctx.font = txtSize + "px sans-serif"; 
-    ctx.font = txtSize + "px Arial";
-    ctx.font = txtSize + 'px Arial Narrow';
-    ctx.font = txtSize + 'px Franklin Gothic Medium';
-}
-
 // Start executing
 window.addEventListener("load", function(event) {
+    const SQUARE_SIZE = 40; // in px
+    const MAX_WIDTH  = 320; // 8 squares wide
+    const MAX_HEIGHT = 320; // 8 squares long
+
+    function handleSwipe(x1, y1, x2, y2) {
+        let swipeThreshold = 50; // min pixels required to swipe
+        let deltax = Math.abs(x2 - x1);
+        let deltay = Math.abs(y2 - y1);
+        let direction = 'n';
+        let distance = (Math.sqrt(Math.pow(deltax, 2) + Math.pow(deltay, 2)));
+        if (distance > swipeThreshold) {
+                if (deltax > deltay) { direction = (x2 > x1) ? 'r' : 'l'; }
+                else                 { direction = (y2 > y1) ? 'd' : 'u'; }
+        }
+        console.log(direction);
+        return direction;
+    }
+
+    function fontSet(ctx, size) {
+        let txtSize = "" + size;
+        ctx.fillStyle = "#19091a";
+        ctx.font = txtSize + "px sans-serif"; 
+        ctx.font = txtSize + "px Arial";
+        ctx.font = txtSize + 'px Arial Narrow';
+        ctx.font = txtSize + 'px Franklin Gothic Medium';
+    }
+    
     const c = this.document.getElementById("canvas");
     const ctx = c.getContext("2d");
     const swipeCounter = this.document.getElementById("swipeCount");

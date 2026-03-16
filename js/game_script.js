@@ -10,157 +10,157 @@ Purpose: JS for the javascript game lab 7.2.
     Swiping motion capture guide: https://www.geeksforgeeks.org/javascript/simple-swipe-with-vanilla-javascript/
  */
 
-const SQUARE_SIZE = 40; // in px
-const MAX_WIDTH  = 320; // 8 squares wide
-const MAX_HEIGHT = 320; // 8 squares long
-
-class square {
-    constructor(x, y, colour) {
-        this.posx = x;
-        this.posy = y;
-        this.colour = colour;
-        this.len = SQUARE_SIZE;
-    }
-    draw(ctx) {
-        ctx.fillStyle = this.colour;
-        ctx.fillRect(this.posx, this.posy, this.len, this.len);
-    }
-    checkCollision(target, message) {
-        this.col_message = message || "colliding";
-        if (target.posx == this.posx && target.posy == this.posy) {
-            // console.log(this.col_message);
-            return true;
-        }
-        return false;
-    }
-}
-
-class player extends square {
-    constructor(x, y, colour) {
-        super(x, y, colour);
-    }
-    moveOneStep(dir) {
-        let direction = "none";
-        switch (dir) {
-            case 'l':
-                direction = "left";
-                this.posx -= SQUARE_SIZE;
-                break;
-            case 'r':
-                direction = "right";
-                this.posx += SQUARE_SIZE;
-                break;
-            case 'u':
-                direction = "up";
-                this.posy -= SQUARE_SIZE;
-                break;
-            case 'd':
-                direction = "down";
-                this.posy += SQUARE_SIZE;
-                break;
-            default:
-                direction = "none";
-                break;
-        }
-        // console.log("Going " + direction);
-    }
-    moveBackOneStep(dir) {
-        let direction = "none";
-        switch (dir) {
-            case 'l':
-                direction = "left";
-                this.posx += SQUARE_SIZE;
-                break;
-            case 'r':
-                direction = "right";
-                this.posx -= SQUARE_SIZE;
-                break;
-            case 'u':
-                direction = "up";
-                this.posy += SQUARE_SIZE;
-                break;
-            case 'd':
-                direction = "down";
-                this.posy -= SQUARE_SIZE;
-                break;
-            default:
-                direction = "none";
-                break;
-        }
-        // console.log("Going " + direction);
-    }
-}
-
-class goal extends square {
-    constructor(x, y, colour) {
-        super(x, y, colour);
-    }
-};
-
-// "error: wall is not a constructor"
-class wall extends square {
-    constructor(x, y, colour) {
-        super(x, y, colour);
-    }
-};
-
-class map {
-    constructor(id, grid, playerx, playery, goalx, goaly, moves3star) {
-        this.id = id;
-        this.grid = grid;
-        this.px = playerx * SQUARE_SIZE;
-        this.py = playery * SQUARE_SIZE;
-        this.gx = goalx * SQUARE_SIZE;
-        this.gy = goaly * SQUARE_SIZE;
-        this.moves3 = moves3star;
-        this.moves2 = Math.ceil(moves3star * 5 / 3);
-    };
-};
-
-// object in place of an enum
-const gameState = {
-    play: 'play',
-    pause: 'pause',
-    end: 'end'
-};
-
-function initWalls(map) {
-    let walls = [];
-    for (let i = 0; i < MAX_HEIGHT / SQUARE_SIZE; i++) {
-        for (let j = 0; j < MAX_WIDTH / SQUARE_SIZE; j++) {
-            if (map[i][j] == 1) {
-                const w = new square(j * SQUARE_SIZE, i * SQUARE_SIZE, "rgb(10, 60, 120)");
-                walls.push(w);
-            }
-        }
-    }
-    return walls;
-}
-
-function handleSwipe(x1, y1, x2, y2) {
-    let swipeThreshold = 50; // min pixels required to swipe
-    let deltax = Math.abs(x2 - x1);
-    let deltay = Math.abs(y2 - y1);
-    let direction = 'n';
-    let distance = (Math.sqrt(Math.pow(deltax, 2) + Math.pow(deltay, 2)));
-    if (distance > swipeThreshold) {
-            if (deltax > deltay) { direction = (x2 > x1) ? 'r' : 'l'; }
-            else                 { direction = (y2 > y1) ? 'd' : 'u'; }
-    }
-    return direction;
-}
-
-function fontSet(ctx, size) {
-    let txtSize = "" + size;
-    ctx.fillStyle = "#19091a";
-    ctx.font = txtSize + "px sans-serif"; 
-    ctx.font = txtSize + "px Arial";
-    ctx.font = txtSize + 'px Arial Narrow';
-    ctx.font = txtSize + 'px Franklin Gothic Medium';
-}
-
 // Start executing
 window.addEventListener("load", function(event) {
+    const SQUARE_SIZE = 40; // in px
+    const MAX_WIDTH  = 320; // 8 squares wide
+    const MAX_HEIGHT = 320; // 8 squares long
+
+    class square {
+        constructor(x, y, colour) {
+            this.posx = x;
+            this.posy = y;
+            this.colour = colour;
+            this.len = SQUARE_SIZE;
+        }
+        draw(ctx) {
+            ctx.fillStyle = this.colour;
+            ctx.fillRect(this.posx, this.posy, this.len, this.len);
+        }
+        checkCollision(target, message) {
+            this.col_message = message || "colliding";
+            if (target.posx == this.posx && target.posy == this.posy) {
+                // console.log(this.col_message);
+                return true;
+            }
+            return false;
+        }
+    }
+
+    class player extends square {
+        constructor(x, y, colour) {
+            super(x, y, colour);
+        }
+        moveOneStep(dir) {
+            let direction = "none";
+            switch (dir) {
+                case 'l':
+                    direction = "left";
+                    this.posx -= SQUARE_SIZE;
+                    break;
+                case 'r':
+                    direction = "right";
+                    this.posx += SQUARE_SIZE;
+                    break;
+                case 'u':
+                    direction = "up";
+                    this.posy -= SQUARE_SIZE;
+                    break;
+                case 'd':
+                    direction = "down";
+                    this.posy += SQUARE_SIZE;
+                    break;
+                default:
+                    direction = "none";
+                    break;
+            }
+            // console.log("Going " + direction);
+        }
+        moveBackOneStep(dir) {
+            let direction = "none";
+            switch (dir) {
+                case 'l':
+                    direction = "left";
+                    this.posx += SQUARE_SIZE;
+                    break;
+                case 'r':
+                    direction = "right";
+                    this.posx -= SQUARE_SIZE;
+                    break;
+                case 'u':
+                    direction = "up";
+                    this.posy += SQUARE_SIZE;
+                    break;
+                case 'd':
+                    direction = "down";
+                    this.posy -= SQUARE_SIZE;
+                    break;
+                default:
+                    direction = "none";
+                    break;
+            }
+            // console.log("Going " + direction);
+        }
+    }
+
+    class goal extends square {
+        constructor(x, y, colour) {
+            super(x, y, colour);
+        }
+    };
+
+    // "error: wall is not a constructor"
+    class wall extends square {
+        constructor(x, y, colour) {
+            super(x, y, colour);
+        }
+    };
+
+    class map {
+        constructor(id, grid, playerx, playery, goalx, goaly, moves3star) {
+            this.id = id;
+            this.grid = grid;
+            this.px = playerx * SQUARE_SIZE;
+            this.py = playery * SQUARE_SIZE;
+            this.gx = goalx * SQUARE_SIZE;
+            this.gy = goaly * SQUARE_SIZE;
+            this.moves3 = moves3star;
+            this.moves2 = Math.ceil(moves3star * 5 / 3);
+        };
+    };
+
+    // object in place of an enum
+    const gameState = {
+        play: 'play',
+        pause: 'pause',
+        end: 'end'
+    };
+
+    function initWalls(map) {
+        let walls = [];
+        for (let i = 0; i < MAX_HEIGHT / SQUARE_SIZE; i++) {
+            for (let j = 0; j < MAX_WIDTH / SQUARE_SIZE; j++) {
+                if (map[i][j] == 1) {
+                    const w = new square(j * SQUARE_SIZE, i * SQUARE_SIZE, "rgb(10, 60, 120)");
+                    walls.push(w);
+                }
+            }
+        }
+        return walls;
+    }
+
+    function handleSwipe(x1, y1, x2, y2) {
+        let swipeThreshold = 50; // min pixels required to swipe
+        let deltax = Math.abs(x2 - x1);
+        let deltay = Math.abs(y2 - y1);
+        let direction = 'n';
+        let distance = (Math.sqrt(Math.pow(deltax, 2) + Math.pow(deltay, 2)));
+        if (distance > swipeThreshold) {
+                if (deltax > deltay) { direction = (x2 > x1) ? 'r' : 'l'; }
+                else                 { direction = (y2 > y1) ? 'd' : 'u'; }
+        }
+        return direction;
+    }
+
+    function fontSet(ctx, size) {
+        let txtSize = "" + size;
+        ctx.fillStyle = "#19091a";
+        ctx.font = txtSize + "px sans-serif"; 
+        ctx.font = txtSize + "px Arial";
+        ctx.font = txtSize + 'px Arial Narrow';
+        ctx.font = txtSize + 'px Franklin Gothic Medium';
+    }
+    
     const c = this.document.getElementById("canvas");
     const ctx = c.getContext("2d");
     const clear = this.document.getElementById("clear");
@@ -266,7 +266,7 @@ window.addEventListener("load", function(event) {
     // navbar buttons
     clear.addEventListener("click", function() {
         sessionStorage.removeItem(cm.id);
-        swipeCount = -1;
+        swipeCount -= 1;
         updateSwipeCount();
     });
     restart.addEventListener("click", function() {

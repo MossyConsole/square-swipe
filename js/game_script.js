@@ -35,7 +35,7 @@ window.addEventListener("load", function(event) {
             }
             return false;
         }
-    }
+    };
 
     class player extends square {
         constructor(x, y, colour) {
@@ -91,7 +91,7 @@ window.addEventListener("load", function(event) {
             }
             // console.log("Going " + direction);
         }
-    }
+    };
 
     class goal extends square {
         constructor(x, y, colour) {
@@ -137,7 +137,7 @@ window.addEventListener("load", function(event) {
             }
         }
         return walls;
-    }
+    };
 
     function handleSwipe(x1, y1, x2, y2) {
         let swipeThreshold = 50; // min pixels required to swipe
@@ -150,7 +150,7 @@ window.addEventListener("load", function(event) {
                 else                 { direction = (y2 > y1) ? 'd' : 'u'; }
         }
         return direction;
-    }
+    };
 
     function fontSet(ctx, size) {
         let txtSize = "" + size;
@@ -159,7 +159,7 @@ window.addEventListener("load", function(event) {
         ctx.font = txtSize + "px Arial";
         ctx.font = txtSize + 'px Arial Narrow';
         ctx.font = txtSize + 'px Franklin Gothic Medium';
-    }
+    };
     
     const c = this.document.getElementById("canvas");
     const ctx = c.getContext("2d");
@@ -266,8 +266,7 @@ window.addEventListener("load", function(event) {
     // navbar buttons
     clear.addEventListener("click", function() {
         sessionStorage.removeItem(cm.id);
-        swipeCount -= 1;
-        updateSwipeCount();
+        updateSwipeCount(true);
     });
     restart.addEventListener("click", function() {
         gameInit();
@@ -453,8 +452,9 @@ window.addEventListener("load", function(event) {
 
         drawScreen();
     }
-    function updateSwipeCount() {
-        swipeCount++;
+    function updateSwipeCount(notinc) {
+        let i = notinc || false;
+        if (!i) { swipeCount++; }
         swipeCounter.innerHTML = "Swipes: " + swipeCount;
         if (sessionStorage.getItem(cm.id)) {
             let record = sessionStorage.getItem(cm.id);

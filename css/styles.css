@@ -51,9 +51,6 @@ h2 {
 .navlink:active {
     background-color: #6c8876;
 }
-#help {
-    background-color: gray;
-}
 #info {
     display: flex;
     justify-content: center;
@@ -66,6 +63,9 @@ h2 {
     text-align: center;
     margin: 0%;
     color: #19091a;
+}
+#footer {
+    margin: 2%;
 }
 #subheader {
     min-height: 30px;

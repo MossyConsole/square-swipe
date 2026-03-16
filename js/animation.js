@@ -28,6 +28,15 @@ function handleSwipe(x1, y1, x2, y2) {
     return direction;
 }
 
+function fontSet(ctx, size) {
+    let txtSize = "" + size;
+    ctx.fillStyle = "#19091a";
+    ctx.font = txtSize + "px sans-serif"; 
+    ctx.font = txtSize + "px Arial";
+    ctx.font = txtSize + 'px Arial Narrow';
+    ctx.font = txtSize + 'px Franklin Gothic Medium';
+}
+
 // Start executing
 window.addEventListener("load", function(event) {
     const c = this.document.getElementById("canvas");
@@ -46,6 +55,7 @@ window.addEventListener("load", function(event) {
     let txt = "Square Swipe!"
     let txts = 1;
 
+    // touch handling
     c.addEventListener('touchstart', function (event) {
         startX = Math.round(event.touches[0].clientX - x_offset);
         startY = Math.round(event.touches[0].clientY - y_offset);
@@ -53,7 +63,6 @@ window.addEventListener("load", function(event) {
 
         document.getElementById("b").style["overflow"] = "hidden"; // stop the body element from moving
     });
-
     c.addEventListener('touchend', function (event) {
         if (!animating) {
             endX = Math.round(event.changedTouches[0].clientX - x_offset);
@@ -68,7 +77,7 @@ window.addEventListener("load", function(event) {
         }
     });
 
-    // starts the animation
+    // animation
     function startAnimation() {
         // 16  milliseconds works out to 62.5 frames per second.
         // for games, 60 frames per second is standard
@@ -83,7 +92,6 @@ window.addEventListener("load", function(event) {
         animating = true;
         // console.log("Animation Started")
     }
-    // stops the animation
     function stopAnimation() {
         clearTimeout(timerId);
         if (!finished_intro) {
@@ -93,6 +101,8 @@ window.addEventListener("load", function(event) {
         document.getElementById("b").style["overflow"] = "visible"; // let the body element move again, on a swipe
         // console.log("Animation Stopped")
     }
+
+    // draw
     function drawScreen() {
         ctx.clearRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
         ctx.fillStyle = "rgb(182, 222, 255)";
@@ -100,10 +110,7 @@ window.addEventListener("load", function(event) {
 
         let txtSize = "" + Math.floor(txts);
         ctx.fillStyle = "#19091a";
-        ctx.font = txtSize + "px sans-serif"; 
-        ctx.font = txtSize + "px Arial";
-        ctx.font = txtSize + 'px Arial Narrow';
-        ctx.font = txtSize + 'px Franklin Gothic Medium';
+        fontSet(ctx, txtSize);
         let txtlen = Math.floor(ctx.measureText(txt).width);
 
         ctx.fillText(txt, 160 - txtlen/2, 80);
@@ -112,31 +119,26 @@ window.addEventListener("load", function(event) {
             ctx.fillStyle = "rgb(167, 63, 161)";
             ctx.fillRect(posx, posy, SQUARE_SIZE, SQUARE_SIZE);
 
-            let subtext = "(Swipe left!)"
-            let txtSize2 = "20";
-            ctx.fillStyle = "#19091a";
-            ctx.font = txtSize2 + "px sans-serif"; 
-            ctx.font = txtSize2 + "px Arial";
-            ctx.font = txtSize2 + 'px Arial Narrow';
-            ctx.font = txtSize2 + 'px Franklin Gothic Medium';
+            let subtext = "(Swipe right!)"
+            fontSet(ctx, 20);
             let txtlen2 = Math.floor(ctx.measureText(subtext).width);
 
             ctx.fillText(subtext, 160 - txtlen2/2, 110);
         }
     }
+
+    // updaters
     function updateIntroAnimation() {   
         if (txts < 40) {
             txts += 0.06;
-            txts *= 1.02;
+            txts *= 1.04;
         }
         else {
             txts = 40;
             stopAnimation();
         }
-        
         drawScreen();
     }
-    // This function is called every 16 milliseconds
     function updateBallAnimation() {
         // Border collision detection: stop the animation if the player is at the edge of the canvas
         if (dir == 'r'){

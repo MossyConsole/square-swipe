@@ -97,7 +97,7 @@ class goal extends square {
     }
 };
 
-// TODO: "error: wall is not a constructor"
+// "error: wall is not a constructor"
 class wall extends square {
     constructor(x, y, colour) {
         super(x, y, colour);
@@ -119,9 +119,9 @@ class map {
 
 // object in place of an enum
 const gameState = {
-    menu: 'menu',
     play: 'play',
-    levels: 'levels'
+    pause: 'pause',
+    end: 'end'
 };
 
 function initWalls(map) {
@@ -150,6 +150,15 @@ function handleSwipe(x1, y1, x2, y2) {
     return direction;
 }
 
+function fontSet(ctx, size) {
+    let txtSize = "" + size;
+    ctx.fillStyle = "#19091a";
+    ctx.font = txtSize + "px sans-serif"; 
+    ctx.font = txtSize + "px Arial";
+    ctx.font = txtSize + 'px Arial Narrow';
+    ctx.font = txtSize + 'px Franklin Gothic Medium';
+}
+
 // Start executing
 window.addEventListener("load", function(event) {
     const c = this.document.getElementById("canvas");
@@ -159,6 +168,7 @@ window.addEventListener("load", function(event) {
     const swipeCounter = this.document.getElementById("swipeCount");
     const swipeRecord = this.document.getElementById("swipeRecord");
     const nextLevel = this.document.getElementById("levels");
+    const help = this.document.getElementById("help");
 
     let startX, startY, endX, endY, dir;
     let swipeCount = 0;
@@ -169,8 +179,8 @@ window.addEventListener("load", function(event) {
     const x_offset = c.getBoundingClientRect().x;
     const y_offset = c.getBoundingClientRect().y;
     const restart = this.document.getElementById("restart");
-
     
+    // grids and maps
     const grid1 = [
                  [1, 0, 0, 0, 0, 0, 0, 1],
                  [1, 0, 0, 0, 1, 1, 1, 1],
@@ -207,11 +217,13 @@ window.addEventListener("load", function(event) {
 
     const maps = [m1, m2, m3];
     let cm = maps[mapIndex]; // current map
-
-    const p = new player(cm.px, cm.py, "rgb(167, 63, 161)");
-    const g = new goal(cm.gx, cm.gy, "rgb(0, 180, 90)");
     let walls = initWalls(cm.grid);
 
+    // entities on maps
+    const p = new player(cm.px, cm.py, "rgb(167, 63, 161)");
+    const g = new goal(cm.gx, cm.gy, "rgb(0, 180, 90)");
+
+    // swiping listeners
     c.addEventListener('touchstart', function (event) {
         startX = Math.round(event.touches[0].clientX - x_offset);
         startY = Math.round(event.touches[0].clientY - y_offset);
@@ -219,7 +231,6 @@ window.addEventListener("load", function(event) {
 
         document.getElementById("b").style["overflow"] = "hidden"; // stop the body element from moving
     });
-
     c.addEventListener('touchend', function (event) {
         if (!animating) {
             endX = Math.round(event.changedTouches[0].clientX - x_offset);
@@ -228,26 +239,40 @@ window.addEventListener("load", function(event) {
             
             dir = handleSwipe(startX, startY, endX, endY);
             if (dir != 'n') { 
-                updateSwipeCount();
-                startAnimation(); 
+                if (game == gameState.play) {
+                    updateSwipeCount();
+                    startAnimation(); 
+                }
+            }
+            else if (game == gameState.pause){
+                    game = gameState.play;
+                    drawScreen();
+                }
+            else if (game == gameState.end){
+                game = gameState.play;
+                gameInit(true);
             }
         }
     });
 
+    // navbar buttons
     clear.addEventListener("click", function() {
         sessionStorage.removeItem(cm.id);
-        gameInit();
+        swipeCount = -1;
+        updateSwipeCount();
     });
-
     restart.addEventListener("click", function() {
         gameInit();
     });
-
     nextLevel.addEventListener("click", function() {
         gameInit(true);
     });
+    help.addEventListener("click", function() {
+        game = gameState.pause;
+        drawHelpScreen();
+    });
 
-    // starts the animation
+    // Animation functions
     function startAnimation() {
         // 16  milliseconds works out to 62.5 frames per second.
         // for games, 60 frames per second is standard
@@ -259,7 +284,6 @@ window.addEventListener("load", function(event) {
         animating = true;
         // console.log("Animation Started")
     }
-    // stops the animation
     function stopAnimation() {
         clearTimeout(timerId);
         animating = false;
@@ -267,6 +291,8 @@ window.addEventListener("load", function(event) {
         document.getElementById("b").style["overflow"] = "visible"; // let the body element move again, on a swipe
         // console.log("Animation Stopped")
     }
+
+    // Drawing functions
     function drawScreen() {
         ctx.clearRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
         ctx.fillStyle = "rgb(182, 222, 255)";
@@ -279,13 +305,106 @@ window.addEventListener("load", function(event) {
             w.draw(ctx);
         }
     }
-    // This function is called every 16 milliseconds
+    function drawEndScreen(record) {
+        drawScreen();
+        stopAnimation();
+        ctx.fillStyle = "rgba(182, 222, 255, 0.5)";
+        ctx.fillRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
+
+        // level 1 complete
+        let txt = "Level " + cm.id + " Complete!";
+        fontSet(ctx, 36);
+        let txtlen = Math.floor(ctx.measureText(txt).width);
+        ctx.fillText(txt, 160 - txtlen/2, 120);
+        
+        // new record
+        if (record) {
+            let txt2 = "NEW RECORD !!";
+            fontSet(ctx, 24);
+            let txtlen2 = Math.floor(ctx.measureText(txt2).width);
+            ctx.fillText(txt2, 160 - txtlen2/2, 160);
+        }
+
+        // swipe to continue
+        let txt3 = "(Swipe to Continue)";
+        fontSet(ctx, 24);
+        let txtlen3 = Math.floor(ctx.measureText(txt3).width);
+        ctx.fillText(txt3, 160 - txtlen3/2, 200);
+    }
+    function drawHelpScreen() {
+        drawScreen();
+        stopAnimation();
+        ctx.fillStyle = "rgba(182, 222, 255, 0.5)";
+        ctx.fillRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
+
+        let txt = "Welcome To";
+        fontSet(ctx, 24);
+        let txtlen = Math.floor(ctx.measureText(txt).width);
+        ctx.fillText(txt, 160 - txtlen/2, 40);
+
+        txt = "Square Swipe!";
+        fontSet(ctx, 36);
+        txtlen = Math.floor(ctx.measureText(txt).width);
+        ctx.fillText(txt, 160 - txtlen/2, 70);
+
+        txt = "Move the purple square by swiping";
+        fontSet(ctx, 16);
+        txtlen = Math.floor(ctx.measureText(txt).width);
+        ctx.fillText(txt, 160 - txtlen/2, 100);
+
+        txt = "with your finger. Try to reach the green";
+        txtlen = Math.floor(ctx.measureText(txt).width);
+        ctx.fillText(txt, 160 - txtlen/2, 120);
+
+        txt = "square in the least number of swipes!";
+        txtlen = Math.floor(ctx.measureText(txt).width);
+        ctx.fillText(txt, 160 - txtlen/2, 140);
+
+        txt = "Press 'Menu' to return to the Menu.";
+        txtlen = Math.floor(ctx.measureText(txt).width);
+        ctx.fillText(txt, 160 - txtlen/2, 170);
+
+        txt = "Press 'Clear' to clear this level's record.";
+        txtlen = Math.floor(ctx.measureText(txt).width);
+        ctx.fillText(txt, 160 - txtlen/2, 190);
+
+        txt = "Press 'Restart' to try this level again.";
+        txtlen = Math.floor(ctx.measureText(txt).width);
+        ctx.fillText(txt, 160 - txtlen/2, 210);
+        
+        txt = "Press 'Next' to move on to the next level.";
+        txtlen = Math.floor(ctx.measureText(txt).width);
+        ctx.fillText(txt, 160 - txtlen/2, 230);
+        
+        txt = "Press 'Help' to see this info again!";
+        txtlen = Math.floor(ctx.measureText(txt).width);
+        ctx.fillText(txt, 160 - txtlen/2, 250);
+
+        // swipe to continue
+        txt = "(Swipe to Continue)";
+        fontSet(ctx, 24);
+        txtlen = Math.floor(ctx.measureText(txt).width);
+        ctx.fillText(txt, 160 - txtlen/2, 280);
+    }
+
+    // Update functions
     function updateBallAnimation() {
         // 1. Update the position of the ball
         p.moveOneStep(dir);
         if (p.checkCollision(g, "Goal reached")) {
-            sessionStorage.setItem(cm.id, swipeCount);
-            gameInit(true);
+            let r = false;
+            if (sessionStorage.getItem(cm.id)) {
+                let record = sessionStorage.getItem(cm.id);
+                if (record > swipeCount) {
+                    sessionStorage.setItem(cm.id, swipeCount);
+                    r = true;
+                }
+            } else {
+                sessionStorage.setItem(cm.id, swipeCount);
+                r = true;
+            }
+            
+            gameEnd(r);
             return;
         }
         for (wall of walls) {
@@ -316,7 +435,6 @@ window.addEventListener("load", function(event) {
 
         drawScreen();
     }
-
     function updateSwipeCount() {
         swipeCount++;
         swipeCounter.innerHTML = "Swipes: " + swipeCount;
@@ -329,6 +447,7 @@ window.addEventListener("load", function(event) {
         }
     }
 
+    // Game state changes
     function gameInit(increment) {
         let inc = increment || false;
         if (inc){
@@ -340,6 +459,7 @@ window.addEventListener("load", function(event) {
                 mapIndex = 0;
             }
         }
+        game = gameState.play;
         cm = maps[mapIndex]; // current map
         levelID.innerHTML = "Level " + cm.id;
         p.posx = cm.px;
@@ -351,8 +471,15 @@ window.addEventListener("load", function(event) {
         updateSwipeCount();
         drawScreen();
     }
-
-    if (game == gameState.play) {
-        gameInit();
+    function gameEnd(record) {
+        game = gameState.end;
+        swipeCount -= 1;
+        updateSwipeCount();
+        drawEndScreen(record);
     }
+
+    // Initial stuff
+    gameInit();
+    game = gameState.pause;
+    drawHelpScreen();
 });

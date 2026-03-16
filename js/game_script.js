@@ -241,14 +241,16 @@ window.addEventListener("load", function(event) {
             if (dir != 'n') { 
                 if (game == gameState.play) {
                     updateSwipeCount();
-                    startAnimation(); 
+                    startAnimation();
+                    return;
                 }
             }
-            else if (game == gameState.pause){
+            if (game == gameState.pause){
                     game = gameState.play;
                     drawScreen();
+                    return;
                 }
-            else if (game == gameState.end){
+            if (game == gameState.end){
                 game = gameState.play;
                 gameInit(true);
             }

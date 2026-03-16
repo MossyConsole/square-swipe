@@ -124,6 +124,17 @@ window.addEventListener("load", function(event) {
             let txtlen2 = Math.floor(ctx.measureText(subtext).width);
 
             ctx.fillText(subtext, 160 - txtlen2/2, 110);
+
+
+            // notice
+            let txt3 = "Note: this app only works on mobile or in";
+            fontSet(ctx, 10);
+            let txtlen3 = Math.floor(ctx.measureText(txt3).width);
+            ctx.fillText(txt3, 160 - txtlen3/2, 305);
+
+            txt3 = "inspect mode with mobile emulation enabled.";
+            txtlen3 = Math.floor(ctx.measureText(txt3).width);
+            ctx.fillText(txt3, 160 - txtlen3/2, 315);
         }
     }
 

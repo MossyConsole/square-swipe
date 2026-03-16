@@ -393,6 +393,16 @@ window.addEventListener("load", function(event) {
         fontSet(ctx, 24);
         txtlen = Math.floor(ctx.measureText(txt).width);
         ctx.fillText(txt, 160 - txtlen/2, 280);
+
+        // notice
+        txt = "Note: this app only works on mobile or in";
+        fontSet(ctx, 10);
+        txtlen = Math.floor(ctx.measureText(txt).width);
+        ctx.fillText(txt, 160 - txtlen/2, 305);
+
+        txt = "inspect mode with mobile emulation enabled.";
+        txtlen = Math.floor(ctx.measureText(txt).width);
+        ctx.fillText(txt, 160 - txtlen/2, 315);
     }
 
     // Update functions

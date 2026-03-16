@@ -266,7 +266,7 @@ window.addEventListener("load", function(event) {
     // navbar buttons
     clear.addEventListener("click", function() {
         sessionStorage.removeItem(cm.id);
-        updateSwipeCount(true);
+        swipeRecord.innerHTML = "Record: " + 0;
     });
     restart.addEventListener("click", function() {
         gameInit();
@@ -452,9 +452,8 @@ window.addEventListener("load", function(event) {
 
         drawScreen();
     }
-    function updateSwipeCount(notinc) {
-        let i = notinc || false;
-        if (!i) { swipeCount++; }
+    function updateSwipeCount() {
+        swipeCount++;
         swipeCounter.innerHTML = "Swipes: " + swipeCount;
         if (sessionStorage.getItem(cm.id)) {
             let record = sessionStorage.getItem(cm.id);

@@ -176,6 +176,7 @@ window.addEventListener("load", function(event) {
     let mapIndex = 0;
     let animating = false;
     let timerId;            // holds the id of the timer
+    let gameWasEnd = false;
     const x_offset = c.getBoundingClientRect().x;
     const y_offset = c.getBoundingClientRect().y;
     const restart = this.document.getElementById("restart");
@@ -246,8 +247,13 @@ window.addEventListener("load", function(event) {
                 }
             }
             if (game == gameState.pause){
-                    game = gameState.play;
-                    drawScreen();
+                    if (gameWasEnd) {
+                        game = gameState.end;
+                        gameEnd();
+                    } else {
+                        game = gameState.play;
+                        drawScreen();
+                    }
                     return;
                 }
             if (game == gameState.end){
@@ -451,6 +457,7 @@ window.addEventListener("load", function(event) {
 
     // Game state changes
     function gameInit(increment) {
+        gameWasEnd = false;
         let inc = increment || false;
         if (inc){
             stopAnimation();
@@ -474,6 +481,7 @@ window.addEventListener("load", function(event) {
         drawScreen();
     }
     function gameEnd(record) {
+        gameWasEnd = true;
         game = gameState.end;
         swipeCount -= 1;
         updateSwipeCount();

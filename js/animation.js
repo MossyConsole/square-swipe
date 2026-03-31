@@ -26,7 +26,7 @@ window.addEventListener("load", function(event) {
                 if (deltax > deltay) { direction = (x2 > x1) ? 'r' : 'l'; }
                 else                 { direction = (y2 > y1) ? 'd' : 'u'; }
         }
-        console.log(direction);
+        // console.log(direction);
         return direction;
     }
 
@@ -81,7 +81,7 @@ window.addEventListener("load", function(event) {
     function startAnimation() {
         // 16  milliseconds works out to 62.5 frames per second.
         // for games, 60 frames per second is standard
-        let FPS = 48;
+        let FPS = 58;
         let ms = 1000 / FPS;
         if (!finished_intro) {
             timerId  = setInterval(updateIntroAnimation);
@@ -141,8 +141,8 @@ window.addEventListener("load", function(event) {
     // updaters
     function updateIntroAnimation() {   
         if (txts < 40) {
-            txts += 0.06;
-            txts *= 1.04;
+            txts += 0.36;
+            txts *= 1.02;
         }
         else {
             txts = 40;
@@ -156,7 +156,7 @@ window.addEventListener("load", function(event) {
             posx += SQUARE_SIZE / 2;
             if (posx >= c.width) {
                 stopAnimation();
-                console.log("bye!");
+                // console.log("bye!");
                 window.location.href = "play.php";
             }
         }

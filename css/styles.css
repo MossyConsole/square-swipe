@@ -93,3 +93,13 @@ h2 {
     border: solid 10px #0a3c78;
     background-color: #ffffff;
 }
+#canvas_equivalent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 320px;
+    min-height: 320px;
+    border: solid 10px #0a3c78;
+    background-color: #ffffff;
+    color: #19091a;
+}

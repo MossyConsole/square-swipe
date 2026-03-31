@@ -161,6 +161,9 @@ window.addEventListener("load", function(event) {
         ctx.font = txtSize + 'px Franklin Gothic Medium';
     };
     
+
+    // MAIN VARIABLES
+
     const c = this.document.getElementById("canvas");
     const ctx = c.getContext("2d");
     const clear = this.document.getElementById("clear");
@@ -265,7 +268,7 @@ window.addEventListener("load", function(event) {
 
     // navbar buttons
     clear.addEventListener("click", function() {
-        sessionStorage.removeItem(cm.id);
+        sessionStorage.removeItem("lvl" + cm.id + "_record");
         swipeRecord.innerHTML = "Record: " + 0;
     });
     restart.addEventListener("click", function() {
@@ -410,14 +413,14 @@ window.addEventListener("load", function(event) {
         p.moveOneStep(dir);
         if (p.checkCollision(g, "Goal reached")) {
             let r = false;
-            if (sessionStorage.getItem(cm.id)) {
-                let record = sessionStorage.getItem(cm.id);
+            if (sessionStorage.getItem("lvl" + cm.id + "_record")) {
+                let record = sessionStorage.getItem("lvl" + cm.id + "_record");
                 if (record > swipeCount) {
-                    sessionStorage.setItem(cm.id, swipeCount);
+                    sessionStorage.setItem("lvl" + cm.id + "_record", swipeCount);
                     r = true;
                 }
             } else {
-                sessionStorage.setItem(cm.id, swipeCount);
+                sessionStorage.setItem("lvl" + cm.id + "_record", swipeCount);
                 r = true;
             }
             
@@ -455,8 +458,8 @@ window.addEventListener("load", function(event) {
     function updateSwipeCount() {
         swipeCount++;
         swipeCounter.innerHTML = "Swipes: " + swipeCount;
-        if (sessionStorage.getItem(cm.id)) {
-            let record = sessionStorage.getItem(cm.id);
+        if (sessionStorage.getItem("lvl" + cm.id + "_record")) {
+            let record = sessionStorage.getItem("lvl" + cm.id + "_record");
             swipeRecord.innerHTML = "Record: " + record;
         }
         else {

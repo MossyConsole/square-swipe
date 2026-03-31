@@ -157,7 +157,7 @@ window.addEventListener("load", function(event) {
             if (posx >= c.width) {
                 stopAnimation();
                 console.log("bye!");
-                window.location.href = "game.html";
+                window.location.href = "play.php";
             }
         }
         else if (dir != 'r') {

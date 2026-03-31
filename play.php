@@ -1,7 +1,7 @@
 <!doctype html>
 <!-- 
 Author: Benoit Thompson. 
-Date created: March 15th
+Date created: March 24th
 Purpose: CSS stylesheet for the javascript game lab 7.2. 
 -->
 <html>
@@ -21,7 +21,7 @@ Purpose: CSS stylesheet for the javascript game lab 7.2.
             <h2>A very fun game (I promise)</h2>
         </div>
         <div id="nav">
-            <input class="navlink" type="submit" value="Menu" onclick="window.location.href='index.html';">
+            <input class="navlink" type="submit" value="Menu" onclick="window.location.href='index.php';">
             <input id="clear" class="navlink" type="submit" value="Clear">
             <input id="restart" class="navlink" type="submit" value="Restart">
             <input id="levels" class="navlink" type="submit" value="Next">

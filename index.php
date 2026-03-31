@@ -1,7 +1,7 @@
 <!doctype html>
 <!-- 
 Author: Benoit Thompson. 
-Date created: March 2nd
+Date created: March 24th
 Purpose: CSS stylesheet for the javascript game lab 7.2. 
 -->
 <html>

@@ -97,9 +97,50 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-width: 320px;
+    min-width: 400px;
     min-height: 320px;
     border: solid 10px #0a3c78;
-    background-color: #ffffff;
+    background-color: #ffffffc3;
     color: #19091a;
+}
+
+form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+form div {
+    padding-bottom: 4%;
+}
+form #grid {
+    width: 85%;
+    display: grid;
+    grid-template-columns: 40% 60%;
+    column-gap: 2%;
+    row-gap: 10%;
+}
+#grid div {
+    height: 100%;
+    width: auto;
+    padding: 6%;
+    background-color: rgb(182, 222, 255);
+    border: solid 2px #0a3c78;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+input.info {
+    width: 150px;
+    height: 30px;
+    background-color: #ffffff;
+    border: 0px;
+}
+input {
+    background-color: #91B39E;
+    width: 90px;
+    height: 30px;
+    border: solid 2px #0a3c78;
+    border-radius: 4px;
 }

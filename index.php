@@ -10,6 +10,7 @@ Purpose: CSS stylesheet for the javascript game lab 7.2.
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="css/styles.css">
+    <script src="js/index.js"></script>
     <title>Square Swipe!</title>
 </head>
 
@@ -24,11 +25,16 @@ Purpose: CSS stylesheet for the javascript game lab 7.2.
         </div>
         <div id="content">
             <div id="canvas_equivalent">
-                <form>
-                    <label></label>
-                    <input>
-                    <label>
-                    <>
+                <form action="login.php" method="post">
+                    <div id="grid">
+                        <div><label>Email:</label></div>
+                        <div><input class="info" id="email" name="email" type="email" placeholder="someone@example.com" required></div>
+                        <div><label>Birthday:</label></div>
+                        <div><input class="info" name="bday" type="date" required></div>
+                    </div>
+                    <div>
+                        <input type="submit" id="confirm" value="Confirm">
+                    </div>
                 </form>
             </div>
         </div>

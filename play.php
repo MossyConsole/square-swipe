@@ -21,7 +21,7 @@ Purpose: CSS stylesheet for the javascript game lab 7.2.
             <h2>A very fun game (I promise)</h2>
         </div>
         <div id="nav">
-            <input class="navlink" type="submit" value="Menu" onclick="window.location.href='welcome.php';">
+            <input class="navlink" type="submit" value="Menu" onclick="window.location.href='index.php';">
             <input id="clear" class="navlink" type="submit" value="Clear">
             <input id="restart" class="navlink" type="submit" value="Restart">
             <input id="levels" class="navlink" type="submit" value="Next">

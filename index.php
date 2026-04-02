@@ -30,10 +30,10 @@ Purpose: CSS stylesheet for the javascript game lab 7.2.
                         <div><label>Email:</label></div>
                         <div><input class="info" id="email" name="email" type="email" placeholder="someone@example.com" required></div>
                         <div><label>Birthday:</label></div>
-                        <div><input class="info" name="bday" type="date" required></div>
+                        <div><input class="info" class="menu" name="bday" type="date" required></div>
                     </div>
                     <div>
-                        <input type="submit" id="confirm" value="Confirm">
+                        <input class="menu" type="submit" id="confirm" value="Confirm">
                     </div>
                 </form>
             </div>

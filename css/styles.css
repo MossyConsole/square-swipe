@@ -156,3 +156,6 @@ input.menu {
 .textbox input {
     margin-top: 8%;
 }
+.hide {
+    display: none;
+}

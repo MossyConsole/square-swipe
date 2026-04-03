@@ -41,6 +41,7 @@ window.addEventListener("load", function(event) {
     
     const c = this.document.getElementById("canvas");
     const ctx = c.getContext("2d");
+    const hidden = this.document.getElementById("hidden");
     const swipeCounter = this.document.getElementById("swipeCount");
 
     let startX, startY, endX, endY, dir;
@@ -157,7 +158,7 @@ window.addEventListener("load", function(event) {
             if (posx >= c.width) {
                 stopAnimation();
                 // console.log("bye!");
-                window.location.href = "play.php";
+                hidden.click();
             }
         }
         else if (dir != 'r') {

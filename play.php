@@ -7,6 +7,7 @@ Purpose: CSS stylesheet for the javascript game lab 7.2.
 
 <?php
 $email = filter_input(INPUT_POST, "email", FILTER_SANITIZE_EMAIL);
+$help = filter_input(INPUT_POST, "help", FILTER_SANITIZE_EMAIL);
 $validEmail = true;
 
 if ($email === null or $email == false){
@@ -29,7 +30,8 @@ if ($email === null or $email == false){
 
 <body id="b">
     <form class="hide" action="leaderboard.php" method="post">
-        <input type="email" class="hide" id="email" value="<?php echo $email; ?>" autocomplete="off">
+        <input type="email" class="hide" id="email" name="email" value="<?php echo $email; ?>" autocomplete="off">
+        <input type="hidden" id="wantHelp" value="<?php echo $help; ?>" autocomplete="off">
         <input id="hidden" type="submit">
     </form>
     <div id="container">

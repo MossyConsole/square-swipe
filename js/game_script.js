@@ -123,8 +123,7 @@ window.addEventListener("load", function(event) {
     const gameState = {
         play: 'play',
         pause: 'pause',
-        end: 'end',
-        leaderboard: 'leaderboard'
+        end: 'end'
     };
 
     function initWalls(map) {
@@ -179,6 +178,8 @@ window.addEventListener("load", function(event) {
     const hiddenEmail = this.document.getElementById("email");
     const email = hiddenEmail.value;
     const numMaps = 3;
+    const hiddenHelp = this.document.getElementById("wantHelp");
+    const   wantsHelp = (hiddenHelp.value != 'false') ? true : false;
     const hiddenInput = this.document.getElementById("hidden");
 
     let startX, startY, endX, endY, dir;
@@ -290,6 +291,7 @@ window.addEventListener("load", function(event) {
         gameInit(true);
     });
     help.addEventListener("click", function() {
+        console.log("hi");
         game = gameState.pause;
         drawHelpScreen();
     });
@@ -523,6 +525,9 @@ window.addEventListener("load", function(event) {
 
     // Initial stuff
     gameInit();
-    game = gameState.pause;
-    drawHelpScreen();
+    if (wantsHelp) {
+        // will be false after quitting the leaderboard page
+        game = gameState.pause;
+        drawHelpScreen();
+    }
 });

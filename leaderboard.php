@@ -22,7 +22,7 @@ if ($email === null or $email == false){
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="css/styles.css">
     <?php
-    if ($correctInfo) {
+    if ($validEmail) {
         echo '<script src="js/leaderboard.js"></script>';
     }
     ?>
@@ -50,16 +50,16 @@ if ($email === null or $email == false){
             <?php    
             if ($validEmail) {
                 ?>
-                    <form class='hide' action='play.php' method='post'>
-                        <input name='email' value="<?php echo $email; ?>" autocomplete="off">
-                        <input id='hidden' type='submit'>
-                    </form>
+                    
         
                     <div id='canvas_equivalent' display='none'>
                         <div class='textbox'>
-                            <p>This email is taken and the birthday entered does not match up with our records.</p>
-                            <p>Click 'Return' to go back and log in.</p>
-                            <input class='menu' type='button' id='return' value='Return' onclick='window.location.href="index.php"'>
+                            <p>Click 'Continue' to go back to the game.</p>
+                            <form action='play.php' method='post'>
+                                <input type="hidden" name='email' value="<?php echo $email; ?>" autocomplete="off">
+                                <input type="hidden" name='help' value="false" autocomplete="off">
+                                <input type='submit' class="menu" value="Continue">
+                            </form>
                         </div>
                     </div>
                 <?php

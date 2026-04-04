@@ -17,39 +17,39 @@ $bday = filter_input(INPUT_POST, "bday", FILTER_SANITIZE_SPECIAL_CHARS);
 
 if ($email === null or $email == false or $bday === null or $bday == false){
     echo "<p>Parameter error</p>";
-}
+} else {
 
-
-// prepare and execute a SELECT command to retrieve an existing user from the db
-$command = "SELECT `birthdate` FROM `squareswipe_accounts` WHERE `email` = ?";
-$stmt = $dbh->prepare($command);
-$params = [$email];
-$success = $stmt->execute($params);
-
-// if the user is found
-if ($success && ($user_row = $stmt->fetch())) {
-    if ($user_row["birthdate"] == $bday) {
-        $correctInfo = true;
-        $hereBefore = true;
-    }
-} 
-// if the user was not found but the query succeded
-else if ($success) {
-    // The email is new
-    $correctInfo = true;
-
-    $command = "INSERT INTO `squareswipe_accounts` (`email`,`birthdate`) VALUES (?, ?)";
+    // prepare and execute a SELECT command to retrieve an existing user from the db
+    $command = "SELECT `birthdate` FROM `squareswipe_accounts` WHERE `email` = ?";
     $stmt = $dbh->prepare($command);
-    $params = [$email, $bday];
+    $params = [$email];
     $success = $stmt->execute($params);
 
-    if (!$success) {
-        echo "<p>INSERT query error</p>";
+    // if the user is found
+    if ($success && ($user_row = $stmt->fetch())) {
+        if ($user_row["birthdate"] == $bday) {
+            $correctInfo = true;
+            $hereBefore = true;
+        }
+    } 
+    // if the user was not found but the query succeded
+    else if ($success) {
+        // The email is new
+        $correctInfo = true;
+
+        $command = "INSERT INTO `squareswipe_accounts` (`email`,`birthdate`) VALUES (?, ?)";
+        $stmt = $dbh->prepare($command);
+        $params = [$email, $bday];
+        $success = $stmt->execute($params);
+
+        if (!$success) {
+            echo "<p>INSERT query error</p>";
+        }
+            
+    } 
+    else {
+        echo "<p>SELECT query error</p>";
     }
-        
-} 
-else {
-    echo "<p>SELECT query error</p>";
 }
 ?>
 <html>
@@ -93,7 +93,7 @@ else {
                 <canvas id='canvas' width='320' height='320'></canvas>
                 
                 <form class='hide' action='play.php' method='post'>
-                    <input name='email' value="<?php echo $email; ?>">
+                    <input name='email' value="<?php echo $email; ?>" autocomplete="off">
                     <input id='hidden' type='submit'>
                 </form>
                 <?php

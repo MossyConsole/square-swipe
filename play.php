@@ -5,7 +5,13 @@ Date created: March 24th
 Purpose: CSS stylesheet for the javascript game lab 7.2. 
 -->
 
-<?php 
+<?php
+$email = filter_input(INPUT_POST, "email", FILTER_SANITIZE_EMAIL);
+$validEmail = true;
+
+if ($email === null or $email == false){
+    $validEmail = false;
+}
 ?>
 <html>
 
@@ -13,11 +19,19 @@ Purpose: CSS stylesheet for the javascript game lab 7.2.
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="css/styles.css">
-    <script src="js/game_script.js"></script>
+    <?php
+    if ($validEmail) {
+        echo '<script src="js/game_script.js"></script>';
+    }
+    ?>
     <title>Square Swipe!</title>
 </head>
 
 <body id="b">
+    <form class="hide" action="leaderboard.php" method="post">
+        <input type="email" class="hide" id="email" value="<?php echo $email; ?>" autocomplete="off">
+        <input id="hidden" type="submit">
+    </form>
     <div id="container">
         <div id="header">
             <h1>Square Swipe!</h1>
@@ -38,7 +52,22 @@ Purpose: CSS stylesheet for the javascript game lab 7.2.
             </div>
         </div>
         <div id="content">
-            <canvas id="canvas" width="320" height="320"></canvas>
+            <?php    
+            if ($validEmail) {
+                echo '<canvas id="canvas" width="320" height="320"></canvas>';
+            } else {
+                ?>
+                <div id='canvas_equivalent' display='none'>
+                    <div class='textbox'>
+                        <p>Parameter error: email not entered.</p>
+                        <p>Click 'Return' to go back and log in.</p>
+                        <input class='menu' type='button' id='return' value='Return' onclick='window.location.href="index.php"'>
+                    </div>
+                </div>
+                <?php
+                echo "<p></p>";
+            }
+            ?>
         </div>
         <div id="footer"><p>&#xA9; Benoit Thompson, CS 1XC3 2025-26<p></div>
     </div>

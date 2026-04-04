@@ -123,7 +123,8 @@ window.addEventListener("load", function(event) {
     const gameState = {
         play: 'play',
         pause: 'pause',
-        end: 'end'
+        end: 'end',
+        leaderboard: 'leaderboard'
     };
 
     function initWalls(map) {
@@ -164,14 +165,21 @@ window.addEventListener("load", function(event) {
 
     // MAIN VARIABLES
 
-    const c = this.document.getElementById("canvas");
+    const c   = this.document.getElementById("canvas");
     const ctx = c.getContext("2d");
-    const clear = this.document.getElementById("clear");
-    const levelID = this.document.getElementById("levelID");
-    const swipeCounter = this.document.getElementById("swipeCount");
-    const swipeRecord = this.document.getElementById("swipeRecord");
+
+    const clear     = this.document.getElementById("clear");
     const nextLevel = this.document.getElementById("levels");
-    const help = this.document.getElementById("help");
+    const help      = this.document.getElementById("help");
+
+    const levelID      = this.document.getElementById("levelID");
+    const swipeCounter = this.document.getElementById("swipeCount");
+    const swipeRecord  = this.document.getElementById("swipeRecord");
+
+    const hiddenEmail = this.document.getElementById("email");
+    const email = hiddenEmail.value;
+    const numMaps = 3;
+    const hiddenInput = this.document.getElementById("hidden");
 
     let startX, startY, endX, endY, dir;
     let swipeCount = 0;
@@ -268,11 +276,15 @@ window.addEventListener("load", function(event) {
 
     // navbar buttons
     clear.addEventListener("click", function() {
-        sessionStorage.removeItem("lvl" + cm.id + "_record");
-        swipeRecord.innerHTML = "Record: " + 0;
+        if (game != gameState.leaderboard) {
+            sessionStorage.removeItem(storageQuery());
+            swipeRecord.innerHTML = "Record: " + 0;
+        }
     });
     restart.addEventListener("click", function() {
-        gameInit();
+        if (game != gameState.leaderboard) {
+            gameInit();
+        }
     });
     nextLevel.addEventListener("click", function() {
         gameInit(true);
@@ -413,14 +425,14 @@ window.addEventListener("load", function(event) {
         p.moveOneStep(dir);
         if (p.checkCollision(g, "Goal reached")) {
             let r = false;
-            if (sessionStorage.getItem("lvl" + cm.id + "_record")) {
-                let record = sessionStorage.getItem("lvl" + cm.id + "_record");
+            if (sessionStorage.getItem(storageQuery())) {
+                let record = sessionStorage.getItem(storageQuery());
                 if (record > swipeCount) {
-                    sessionStorage.setItem("lvl" + cm.id + "_record", swipeCount);
+                    sessionStorage.setItem(storageQuery(), swipeCount);
                     r = true;
                 }
             } else {
-                sessionStorage.setItem("lvl" + cm.id + "_record", swipeCount);
+                sessionStorage.setItem(storageQuery(), swipeCount);
                 r = true;
             }
             
@@ -458,8 +470,8 @@ window.addEventListener("load", function(event) {
     function updateSwipeCount() {
         swipeCount++;
         swipeCounter.innerHTML = "Swipes: " + swipeCount;
-        if (sessionStorage.getItem("lvl" + cm.id + "_record")) {
-            let record = sessionStorage.getItem("lvl" + cm.id + "_record");
+        if (record = sessionStorage.getItem(storageQuery())) {
+            // let record = sessionStorage.getItem(storageQuery());
             swipeRecord.innerHTML = "Record: " + record;
         }
         else {
@@ -467,30 +479,39 @@ window.addEventListener("load", function(event) {
         }
     }
 
+    function storageQuery() {
+        return "email=" + email + "&record_lvl=" + cm.id;
+    }
+
     // Game state changes
     function gameInit(increment) {
         gameWasEnd = false;
+        game = gameState.play;
         let inc = increment || false;
         if (inc){
             stopAnimation();
-            if(mapIndex < 2) {
+            if(mapIndex <= numMaps - 1) {
                 mapIndex++;
+                if (mapIndex == numMaps) {
+                    hiddenInput.click();
+                }
             }
             else {
                 mapIndex = 0;
             }
+        }        
+        if (game == gameState.play) {
+            cm = maps[mapIndex]; // current map
+            levelID.innerHTML = "Level " + cm.id;
+            p.posx = cm.px;
+            p.posy = cm.py;
+            g.posx = cm.gx;
+            g.posy = cm.gy;
+            swipeCount = -1;
+            walls = initWalls(cm.grid);
+            updateSwipeCount();
+            drawScreen();
         }
-        game = gameState.play;
-        cm = maps[mapIndex]; // current map
-        levelID.innerHTML = "Level " + cm.id;
-        p.posx = cm.px;
-        p.posy = cm.py;
-        g.posx = cm.gx;
-        g.posy = cm.gy;
-        swipeCount = -1;
-        walls = initWalls(cm.grid);
-        updateSwipeCount();
-        drawScreen();
     }
     function gameEnd(record) {
         gameWasEnd = true;

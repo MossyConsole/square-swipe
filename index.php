@@ -27,9 +27,9 @@ Purpose: CSS stylesheet for the javascript game lab 7.2.
             <div id="canvas_equivalent">
                 <form action="login.php" method="post">
                     <div id="grid">
-                        <div><label>Email:</label></div>
-                        <div><input class="info" id="email" name="email" type="email" placeholder="someone@example.com" required></div>
-                        <div><label>Birthday:</label></div>
+                        <div><p>Email:</p></div>
+                        <div><input class="info" id="email" name="email" type="email" placeholder="someone@example.com" autocomplete="email" required></div>
+                        <div><p>Birthday:</p></div>
                         <div><input class="info" class="menu" name="bday" type="date" required></div>
                     </div>
                     <div>

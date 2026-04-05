@@ -159,3 +159,15 @@ input.menu {
 .hide {
     display: none;
 }
+.levels {
+    overflow-wrap: break-word;
+    font-size: 0.8em;
+    width: 85%;
+}
+.levels td {
+    width: 35%;
+}
+.lvlmarker {
+    font-size: 1.04em;
+    border-bottom: solid 2px #19091a;
+}

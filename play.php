@@ -2,7 +2,7 @@
 <!-- 
 Author: Benoit Thompson. 
 Date created: March 24th
-Purpose: CSS stylesheet for the javascript game lab 7.2. 
+Purpose: php for the gameplay
 -->
 
 <?php

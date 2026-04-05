@@ -2,7 +2,7 @@
 <!-- 
 Author: Benoit Thompson. 
 Date created: March 31st
-Purpose: CSS stylesheet for the javascript game lab 7.2. 
+Purpose: php for the leaderboard
 -->
 <?php
 include 'connect.php';
@@ -50,18 +50,29 @@ if ($email === null or $email == false){
             <?php    
             if ($validEmail) {
                 ?>
-                    
-        
-                    <div id='canvas_equivalent' display='none'>
-                        <div class='textbox'>
-                            <p>Click 'Continue' to go back to the game.</p>
-                            <form action='play.php' method='post'>
-                                <input type="hidden" name='email' value="<?php echo $email; ?>" autocomplete="off">
-                                <input type="hidden" name='help' value="false" autocomplete="off">
-                                <input type='submit' class="menu" value="Continue">
-                            </form>
-                        </div>
+                <div id='canvas_equivalent' display='none'>
+                    <div class='textbox'>
+                        <br>
+                        <h2>Top Three Players Per Level</h2>
+                        <br>
+                        <h4 class="lvlmarker">Level 1</h4>
+                        <table class="levels" id='1'></table>
+                        <br>
+                        <h4 class="lvlmarker">Level 2</h4>
+                        <table class="levels" id='2'></table>
+                        <br>
+                        <h4 class="lvlmarker">Level 3</h4>
+                        <table class="levels" id='3'></table>
+                        <br>
+                        <h4>Click 'Continue' to go back to the game.</h4>
+                        <form action='play.php' method='post'>
+                            <input type="hidden" id="email" name='email' value="<?php echo $email; ?>" autocomplete="off">
+                            <input type="hidden" name='help' value="false" autocomplete="off">
+                            <input type='submit' class="menu" value="Continue">
+                        </form>
+                        <br>
                     </div>
+                </div>
                 <?php
             } else {
                 ?>

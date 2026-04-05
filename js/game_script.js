@@ -1,7 +1,7 @@
 /* 
 Author: Benoit Thompson. 
 Date created: March 2nd
-Purpose: JS for the javascript game lab 7.2. 
+Purpose: JS for the javascript game
 */
 
 /*
@@ -179,7 +179,7 @@ window.addEventListener("load", function(event) {
     const email = hiddenEmail.value;
     const numMaps = 3;
     const hiddenHelp = this.document.getElementById("wantHelp");
-    const   wantsHelp = (hiddenHelp.value != 'false') ? true : false;
+    const wantsHelp = (hiddenHelp.value != 'false') ? true : false;
     const hiddenInput = this.document.getElementById("hidden");
 
     let startX, startY, endX, endY, dir;
@@ -192,7 +192,8 @@ window.addEventListener("load", function(event) {
     const x_offset = c.getBoundingClientRect().x;
     const y_offset = c.getBoundingClientRect().y;
     const restart = this.document.getElementById("restart");
-    
+    let startTime, endTime;
+
     // grids and maps
     const grid1 = [
                  [1, 0, 0, 0, 0, 0, 0, 1],
@@ -364,51 +365,57 @@ window.addEventListener("load", function(event) {
         let txt = "Welcome To";
         fontSet(ctx, 24);
         let txtlen = Math.floor(ctx.measureText(txt).width);
-        ctx.fillText(txt, 160 - txtlen/2, 40);
+        ctx.fillText(txt, 160 - txtlen/2, 30);
 
         txt = "Square Swipe!";
         fontSet(ctx, 36);
         txtlen = Math.floor(ctx.measureText(txt).width);
-        ctx.fillText(txt, 160 - txtlen/2, 70);
+        ctx.fillText(txt, 160 - txtlen/2, 60);
+
 
         txt = "Move the purple square by swiping";
         fontSet(ctx, 16);
         txtlen = Math.floor(ctx.measureText(txt).width);
-        ctx.fillText(txt, 160 - txtlen/2, 100);
+        ctx.fillText(txt, 160 - txtlen/2, 90);
 
         txt = "with your finger. Try to reach the green";
         txtlen = Math.floor(ctx.measureText(txt).width);
-        ctx.fillText(txt, 160 - txtlen/2, 120);
+        ctx.fillText(txt, 160 - txtlen/2, 108);
 
         txt = "square in the least number of swipes!";
         txtlen = Math.floor(ctx.measureText(txt).width);
-        ctx.fillText(txt, 160 - txtlen/2, 140);
+        ctx.fillText(txt, 160 - txtlen/2, 126);
 
+        // buttons explanations
         txt = "Press 'Menu' to return to the Menu.";
         txtlen = Math.floor(ctx.measureText(txt).width);
-        ctx.fillText(txt, 160 - txtlen/2, 170);
+        ctx.fillText(txt, 160 - txtlen/2, 154);
 
         txt = "Press 'Clear' to clear this level's record.";
         txtlen = Math.floor(ctx.measureText(txt).width);
-        ctx.fillText(txt, 160 - txtlen/2, 190);
+        ctx.fillText(txt, 160 - txtlen/2, 174);
 
         txt = "Press 'Restart' to try this level again.";
         txtlen = Math.floor(ctx.measureText(txt).width);
-        ctx.fillText(txt, 160 - txtlen/2, 210);
+        ctx.fillText(txt, 160 - txtlen/2, 194);
         
         txt = "Press 'Next' to move on to the next level.";
         txtlen = Math.floor(ctx.measureText(txt).width);
-        ctx.fillText(txt, 160 - txtlen/2, 230);
+        ctx.fillText(txt, 160 - txtlen/2, 214);
+
+        txt = "After level 3, a leaderboard will display.";
+        txtlen = Math.floor(ctx.measureText(txt).width);
+        ctx.fillText(txt, 160 - txtlen/2, 234);
         
         txt = "Press 'Help' to see this info again!";
         txtlen = Math.floor(ctx.measureText(txt).width);
-        ctx.fillText(txt, 160 - txtlen/2, 250);
+        ctx.fillText(txt, 160 - txtlen/2, 254);
 
         // swipe to continue
         txt = "(Swipe to Continue)";
-        fontSet(ctx, 24);
+        fontSet(ctx, 22);
         txtlen = Math.floor(ctx.measureText(txt).width);
-        ctx.fillText(txt, 160 - txtlen/2, 280);
+        ctx.fillText(txt, 160 - txtlen/2, 284);
 
         // notice
         txt = "Note: this app only works on mobile or in";
@@ -432,10 +439,12 @@ window.addEventListener("load", function(event) {
                 if (record > swipeCount) {
                     sessionStorage.setItem(storageQuery(), swipeCount);
                     r = true;
+                    recordQuery(swipeCount, endClock());
                 }
             } else {
                 sessionStorage.setItem(storageQuery(), swipeCount);
                 r = true;
+                recordQuery(swipeCount, endClock());
             }
             
             gameEnd(r);
@@ -485,6 +494,33 @@ window.addEventListener("load", function(event) {
         return "email=" + email + "&record_lvl=" + cm.id;
     }
 
+    // record records with an ajax fetch
+    function recordQuery(record, time) {
+        let url = "insert_records.php?email=" + email + "&level=" + cm.id + "&swipes=" + record + "&time=" + time;
+        // console.log("URL: " + url);
+        fetch(url)
+            .then(response => response.text())
+            .then(data => {
+                // console.log(data);
+                // Nothing needs to be done with this data on this end. I just needed to make that INSERT query
+                // console.log("DATA\n\tUser: " + data["email"] + "\n\tRecord: " + data["record"]);
+            });
+    }
+
+    function startClock() {
+        startTime = new Date();
+    };
+
+    function endClock() {
+        endTime = new Date();
+        var timeDiff = endTime - startTime; // ms
+        timeDiff /= 1000;
+
+        // get seconds 
+        var seconds = Math.round(timeDiff);
+        return seconds;
+    }
+
     // Game state changes
     function gameInit(increment) {
         gameWasEnd = false;
@@ -495,6 +531,7 @@ window.addEventListener("load", function(event) {
             if(mapIndex <= numMaps - 1) {
                 mapIndex++;
                 if (mapIndex == numMaps) {
+                    game = gameState.pause;
                     hiddenInput.click();
                 }
             }
@@ -513,12 +550,14 @@ window.addEventListener("load", function(event) {
             walls = initWalls(cm.grid);
             updateSwipeCount();
             drawScreen();
+            startClock();
         }
     }
     function gameEnd(record) {
         gameWasEnd = true;
         game = gameState.end;
         swipeCount -= 1;
+        let timeElapsed = endClock();
         updateSwipeCount();
         drawEndScreen(record);
     }

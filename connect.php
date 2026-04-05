@@ -7,6 +7,7 @@
  */
 
 try {
+    
     $dbh = new PDO(
         "mysql:host=localhost;dbname=thompb31_db",
         "root",
